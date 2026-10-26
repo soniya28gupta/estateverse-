@@ -1,0 +1,18 @@
+/* EstateVerse 3D Custom Application Styling */
+
+@keyframes pulseGlow {
+  0%, 100% {
+    box-shadow: 0 0 15px rgba(198, 167, 107, 0.2);
+  }
+  50% {
+    box-shadow: 0 0 28px rgba(198, 167, 107, 0.45);
+  }
+}
+
+.gold-pulse-glow {
+  animation: pulseGlow 3.5s infinite ease-in-out;
+}
+
+.perspective-1000 {
+  perspective: 1000px;
+}

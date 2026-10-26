@@ -1,0 +1,77 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --color-midnight: #101820;
+    --color-ivory: #F7F5EF;
+    --color-stone: #D9D5CC;
+    --color-gold: #C6A76B;
+    --color-sage: #82917B;
+  }
+
+  html, body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+    background-color: #0a0f14;
+    color: #F7F5EF;
+    overflow-x: hidden;
+  }
+
+  #root {
+    min-height: 100vh;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+  }
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #101820;
+}
+::-webkit-scrollbar-thumb {
+  background: #233242;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #C6A76B;
+}
+
+/* Glassmorphism subtle helper */
+.glass-panel {
+  background: rgba(16, 24, 32, 0.78);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(198, 167, 107, 0.15);
+}
+
+.glass-panel-light {
+  background: rgba(247, 245, 239, 0.92);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(217, 213, 204, 0.6);
+}
+
+.gold-glow {
+  box-shadow: 0 0 25px rgba(198, 167, 107, 0.18);
+}
+
+.gold-border-gradient {
+  border-image: linear-gradient(135deg, #C6A76B, transparent 60%) 1;
+}
+
+/* Canvas wrapper */
+.canvas-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
