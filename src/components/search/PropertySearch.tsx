@@ -50,10 +50,10 @@ export const PropertySearch: React.FC<PropertySearchProps> = ({
         <button
           type="button"
           onClick={() => onFilterChange({ ...filters, status: 'For Sale' })}
-          className={`px-5 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all ${
+          className={`px-5 py-2.5 rounded-2xl text-xs sm:text-sm font-semibold transition-all ${
             filters.status === 'For Sale'
-              ? 'bg-gold-400 text-midnight-950 shadow-lg shadow-gold-400/25 ring-2 ring-gold-300/40'
-              : 'bg-midnight-900/80 text-stone-300 hover:text-white border border-stone-800'
+              ? 'bg-[#17191C] text-white shadow-soft'
+              : 'bg-white text-[#6B7280] hover:text-[#17191C] border border-[#E7E9ED]'
           }`}
         >
           Buy Properties
@@ -61,37 +61,37 @@ export const PropertySearch: React.FC<PropertySearchProps> = ({
         <button
           type="button"
           onClick={() => onFilterChange({ ...filters, status: 'For Rent' })}
-          className={`px-5 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all ${
+          className={`px-5 py-2.5 rounded-2xl text-xs sm:text-sm font-semibold transition-all ${
             filters.status === 'For Rent'
-              ? 'bg-gold-400 text-midnight-950 shadow-lg shadow-gold-400/25 ring-2 ring-gold-300/40'
-              : 'bg-midnight-900/80 text-stone-300 hover:text-white border border-stone-800'
+              ? 'bg-[#17191C] text-white shadow-soft'
+              : 'bg-white text-[#6B7280] hover:text-[#17191C] border border-[#E7E9ED]'
           }`}
         >
           Rent Properties
         </button>
 
-        <span className="ml-auto text-xs text-stone-400 hidden sm:inline-block">
-          <span className="font-semibold text-gold-300">{resultCount}</span> spaces available
+        <span className="ml-auto text-xs text-[#6B7280] hidden sm:inline-block font-medium">
+          Showing <span className="font-bold text-[#B89558]">{resultCount}</span> spaces matching your criteria
         </span>
       </div>
 
-      {/* Main Glass Search Bar */}
-      <div className="p-4 sm:p-5 rounded-2xl bg-midnight-900/90 backdrop-blur-xl border border-gold-400/25 shadow-2xl">
+      {/* Main White Luxury Search Bar Card */}
+      <div className="p-4 sm:p-6 rounded-3xl bg-white border border-[#E7E9ED] shadow-soft-xl">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3.5 items-center">
-          {/* Location / Locality Input */}
+          {/* Location / City Input */}
           <div className="relative">
-            <label className="block text-[11px] font-semibold text-stone-400 uppercase tracking-wider mb-1">
-              Location
+            <label className="block text-[11px] font-bold text-[#6B7280] uppercase tracking-wider mb-1.5">
+              City / Metro
             </label>
             <div className="relative flex items-center">
-              <MapPin className="absolute left-3 w-4 h-4 text-gold-400 pointer-events-none" />
+              <MapPin className="absolute left-3.5 w-4 h-4 text-[#B89558] pointer-events-none" />
               <select
                 value={filters.city}
                 onChange={(e) => onFilterChange({ ...filters, city: e.target.value })}
-                className="w-full pl-9 pr-3 py-2.5 rounded-xl bg-midnight-950/80 text-white text-xs sm:text-sm border border-stone-800 focus:border-gold-400 focus:outline-none transition appearance-none cursor-pointer"
+                className="w-full pl-9 pr-3 py-2.5 rounded-2xl bg-[#F7F8FA] text-[#17191C] text-xs sm:text-sm font-medium border border-[#E7E9ED] focus:border-[#B89558] focus:bg-white focus:outline-none transition appearance-none cursor-pointer"
               >
                 {INDIAN_CITIES.map((city) => (
-                  <option key={city} value={city} className="bg-midnight-950 text-white">
+                  <option key={city} value={city} className="bg-white text-[#17191C]">
                     {city}
                   </option>
                 ))}
@@ -101,18 +101,18 @@ export const PropertySearch: React.FC<PropertySearchProps> = ({
 
           {/* Property Type */}
           <div className="relative">
-            <label className="block text-[11px] font-semibold text-stone-400 uppercase tracking-wider mb-1">
+            <label className="block text-[11px] font-bold text-[#6B7280] uppercase tracking-wider mb-1.5">
               Property Type
             </label>
             <div className="relative flex items-center">
-              <Building2 className="absolute left-3 w-4 h-4 text-gold-400 pointer-events-none" />
+              <Building2 className="absolute left-3.5 w-4 h-4 text-[#B89558] pointer-events-none" />
               <select
                 value={filters.propertyType}
                 onChange={(e) => onFilterChange({ ...filters, propertyType: e.target.value })}
-                className="w-full pl-9 pr-3 py-2.5 rounded-xl bg-midnight-950/80 text-white text-xs sm:text-sm border border-stone-800 focus:border-gold-400 focus:outline-none transition appearance-none cursor-pointer"
+                className="w-full pl-9 pr-3 py-2.5 rounded-2xl bg-[#F7F8FA] text-[#17191C] text-xs sm:text-sm font-medium border border-[#E7E9ED] focus:border-[#B89558] focus:bg-white focus:outline-none transition appearance-none cursor-pointer"
               >
                 {PROPERTY_TYPES.map((t) => (
-                  <option key={t.value} value={t.value} className="bg-midnight-950 text-white">
+                  <option key={t.value} value={t.value} className="bg-white text-[#17191C]">
                     {t.label}
                   </option>
                 ))}
@@ -120,20 +120,20 @@ export const PropertySearch: React.FC<PropertySearchProps> = ({
             </div>
           </div>
 
-          {/* Price Range */}
+          {/* Budget Range */}
           <div className="relative">
-            <label className="block text-[11px] font-semibold text-stone-400 uppercase tracking-wider mb-1">
+            <label className="block text-[11px] font-bold text-[#6B7280] uppercase tracking-wider mb-1.5">
               Budget Range
             </label>
             <div className="relative flex items-center">
-              <span className="absolute left-3 text-gold-400 text-xs font-bold pointer-events-none">₹</span>
+              <span className="absolute left-3.5 text-[#B89558] text-xs font-bold pointer-events-none">₹</span>
               <select
                 value={filters.priceRange}
                 onChange={(e) => onFilterChange({ ...filters, priceRange: e.target.value })}
-                className="w-full pl-8 pr-3 py-2.5 rounded-xl bg-midnight-950/80 text-white text-xs sm:text-sm border border-stone-800 focus:border-gold-400 focus:outline-none transition appearance-none cursor-pointer"
+                className="w-full pl-8 pr-3 py-2.5 rounded-2xl bg-[#F7F8FA] text-[#17191C] text-xs sm:text-sm font-medium border border-[#E7E9ED] focus:border-[#B89558] focus:bg-white focus:outline-none transition appearance-none cursor-pointer"
               >
                 {priceRanges.map((p) => (
-                  <option key={p.value} value={p.value} className="bg-midnight-950 text-white">
+                  <option key={p.value} value={p.value} className="bg-white text-[#17191C]">
                     {p.label}
                   </option>
                 ))}
@@ -143,18 +143,18 @@ export const PropertySearch: React.FC<PropertySearchProps> = ({
 
           {/* Bedrooms */}
           <div className="relative">
-            <label className="block text-[11px] font-semibold text-stone-400 uppercase tracking-wider mb-1">
+            <label className="block text-[11px] font-bold text-[#6B7280] uppercase tracking-wider mb-1.5">
               Bedrooms
             </label>
             <div className="relative flex items-center">
-              <BedDouble className="absolute left-3 w-4 h-4 text-gold-400 pointer-events-none" />
+              <BedDouble className="absolute left-3.5 w-4 h-4 text-[#B89558] pointer-events-none" />
               <select
                 value={filters.bedrooms}
                 onChange={(e) => onFilterChange({ ...filters, bedrooms: e.target.value })}
-                className="w-full pl-9 pr-3 py-2.5 rounded-xl bg-midnight-950/80 text-white text-xs sm:text-sm border border-stone-800 focus:border-gold-400 focus:outline-none transition appearance-none cursor-pointer"
+                className="w-full pl-9 pr-3 py-2.5 rounded-2xl bg-[#F7F8FA] text-[#17191C] text-xs sm:text-sm font-medium border border-[#E7E9ED] focus:border-[#B89558] focus:bg-white focus:outline-none transition appearance-none cursor-pointer"
               >
                 {bedroomOptions.map((b) => (
-                  <option key={b.value} value={b.value} className="bg-midnight-950 text-white">
+                  <option key={b.value} value={b.value} className="bg-white text-[#17191C]">
                     {b.label}
                   </option>
                 ))}
@@ -163,23 +163,23 @@ export const PropertySearch: React.FC<PropertySearchProps> = ({
           </div>
 
           {/* Action Buttons */}
-          <div className="flex items-center gap-2 pt-4 sm:pt-0">
+          <div className="flex items-center gap-2 pt-4 sm:pt-4">
             <button
               type="button"
               onClick={() => {
                 const el = document.getElementById('featured-properties');
                 if (el) el.scrollIntoView({ behavior: 'smooth' });
               }}
-              className="flex-1 flex items-center justify-center gap-2 py-3 px-4 rounded-xl bg-gradient-to-r from-gold-400 to-gold-500 hover:from-gold-300 hover:to-gold-400 text-midnight-950 font-bold text-xs sm:text-sm transition-all shadow-lg shadow-gold-400/20 active:scale-95"
+              className="flex-1 flex items-center justify-center gap-2 py-3 px-4 rounded-2xl bg-[#17191C] hover:bg-[#B89558] text-white font-semibold text-xs sm:text-sm transition-all shadow-soft active:scale-95"
             >
-              <Search className="w-4 h-4 stroke-[2.5]" />
-              Find Homes
+              <Search className="w-4 h-4 stroke-[2.2]" />
+              Find Spaces
             </button>
             <button
               type="button"
               onClick={onResetFilters}
-              title="Reset Search Filters"
-              className="p-3 rounded-xl bg-midnight-950/80 hover:bg-stone-800 text-stone-400 hover:text-white border border-stone-800 transition"
+              title="Reset All Filters"
+              className="p-3 rounded-2xl bg-[#F7F8FA] hover:bg-[#FAF6EE] text-[#6B7280] hover:text-[#B89558] border border-[#E7E9ED] transition"
               aria-label="Reset Filters"
             >
               <RotateCcw className="w-4 h-4" />
@@ -188,14 +188,14 @@ export const PropertySearch: React.FC<PropertySearchProps> = ({
         </div>
 
         {/* Free text search input row */}
-        <div className="mt-3 pt-3 border-t border-stone-800/80 flex items-center gap-2">
-          <Search className="w-4 h-4 text-stone-500" />
+        <div className="mt-4 pt-3.5 border-t border-[#E7E9ED] flex items-center gap-2.5">
+          <Search className="w-4 h-4 text-[#9CA3AF]" />
           <input
             type="text"
-            placeholder="Search by keywords (e.g., 'swimming pool', 'Super Corridor', 'penthouse', 'garden')..."
+            placeholder="Search by keywords, amenities or localities (e.g., 'infinity pool', 'Super Corridor', 'penthouse', 'private garden')..."
             value={filters.searchQuery}
             onChange={(e) => onFilterChange({ ...filters, searchQuery: e.target.value })}
-            className="w-full bg-transparent text-xs text-stone-200 placeholder-stone-500 focus:outline-none"
+            className="w-full bg-transparent text-xs sm:text-sm text-[#17191C] placeholder-[#9CA3AF] focus:outline-none font-medium"
           />
         </div>
       </div>

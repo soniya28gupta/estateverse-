@@ -1,17 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import {
-  Compass,
-  Heart,
-  Box,
-  MapPin,
-  Calculator,
-  Info,
-  Menu,
-  X,
-  PlusCircle,
-  Sparkles,
-  User
+  Box, Heart, Sparkles, ArrowRight, Menu, X, Home, Compass,
+  Box as Box3D, Layers, MapPin, Calculator, Info
 } from 'lucide-react';
 import { getStoredFavorites } from '../../utils/formatters';
 
@@ -20,190 +11,274 @@ interface NavbarProps {
   favoritesCount?: number;
 }
 
+const navLinks = [
+  { label: 'Home', href: '/', icon: Home },
+  { label: 'Explore', href: '/explore', icon: Compass },
+  { label: '3D Tours', href: '/#experience-3d', icon: Box3D },
+  { label: 'Collections', href: '/#curated-collections', icon: Layers },
+  { label: 'Neighborhoods', href: '/neighborhoods', icon: MapPin },
+  { label: 'Calculator', href: '/calculator', icon: Calculator },
+  { label: 'About', href: '/about', icon: Info },
+];
+
 export const Navbar: React.FC<NavbarProps> = ({ onOpenAssistant, favoritesCount: propFavCount }) => {
   const [isScrolled, setIsScrolled] = useState(false);
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
   const [favCount, setFavCount] = useState(0);
   const location = useLocation();
+  const drawerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 40);
-    };
-    window.addEventListener('scroll', handleScroll);
+    const handleScroll = () => setIsScrolled(window.scrollY > 20);
+    window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   useEffect(() => {
-    if (propFavCount !== undefined) {
-      setFavCount(propFavCount);
-    } else {
-      setFavCount(getStoredFavorites().length);
-    }
+    setFavCount(propFavCount !== undefined ? propFavCount : getStoredFavorites().length);
   }, [propFavCount, location.pathname]);
 
-  const navLinks = [
-    { label: 'Home', href: '/' },
-    { label: 'Explore', href: '/explore' },
-    { label: '3D Tours', href: '/#3d-tours' },
-    { label: 'Neighborhoods', href: '/neighborhoods' },
-    { label: 'Mortgage Calculator', href: '/calculator' },
-    { label: 'About', href: '/about' },
-  ];
+  // Close mobile menu on route change
+  useEffect(() => {
+    setMobileOpen(false);
+  }, [location.pathname]);
+
+  // Close on Escape key
+  useEffect(() => {
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && mobileOpen) setMobileOpen(false);
+    };
+    window.addEventListener('keydown', handleKey);
+    return () => window.removeEventListener('keydown', handleKey);
+  }, [mobileOpen]);
+
+  // Lock body scroll when mobile menu is open
+  useEffect(() => {
+    document.body.style.overflow = mobileOpen ? 'hidden' : '';
+    return () => { document.body.style.overflow = ''; };
+  }, [mobileOpen]);
+
+  const isActive = (href: string) => {
+    if (href === '/') return location.pathname === '/';
+    return location.pathname === href || location.pathname.startsWith(href + '/');
+  };
+
+  const handleNavClick = (href: string) => {
+    setMobileOpen(false);
+    // Handle hash links
+    if (href.includes('#')) {
+      const id = href.split('#')[1];
+      const el = document.getElementById(id);
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }
+  };
 
   return (
-    <header
-      className={`fixed top-0 left-0 right-0 z-40 transition-all duration-300 ${
-        isScrolled
-          ? 'bg-midnight-950/90 backdrop-blur-md border-b border-gold-400/20 py-3 shadow-xl'
-          : 'bg-gradient-to-b from-midnight-950/80 via-midnight-950/40 to-transparent py-5'
-      }`}
-    >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between">
-          {/* Logo */}
-          <Link to="/" className="flex items-center gap-2.5 group">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-gold-300 via-gold-400 to-gold-600 flex items-center justify-center text-midnight-950 shadow-md group-hover:scale-105 transition-transform">
-              <Box className="w-5 h-5 text-midnight-950 stroke-[2.2]" />
+    <>
+      {/* ── HEADER ── */}
+      <header
+        className={`navbar${isScrolled ? ' scrolled' : ''}`}
+        role="banner"
+      >
+        <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 h-full flex items-center">
+          {/* ── LEFT: Logo ── */}
+          <Link
+            to="/"
+            className="flex items-center gap-2.5 shrink-0 group mr-8"
+            aria-label="EstateVerse 3D — Home"
+          >
+            <div className="w-9 h-9 rounded-xl bg-[#17191C] group-hover:bg-[#B89558] flex items-center justify-center text-white transition-colors duration-300 shadow-sm">
+              <Box className="w-4.5 h-4.5 stroke-[2]" style={{ width: '18px', height: '18px' }} />
             </div>
-            <div>
-              <div className="font-display text-lg sm:text-xl font-bold tracking-wider text-white flex items-center gap-1.5">
+            <div className="hidden sm:block leading-tight">
+              <div className="font-display text-[15px] font-bold tracking-wider text-[#17191C] flex items-center gap-1.5">
                 ESTATEVERSE
-                <span className="text-xs px-1.5 py-0.5 rounded bg-gold-400/20 text-gold-300 border border-gold-400/40 font-sans font-semibold">
+                <span className="text-[9px] px-1.5 py-0.5 rounded-md bg-[#FAF6EE] text-[#B89558] border border-[#E9DCBC] font-sans font-bold leading-none">
                   3D
                 </span>
               </div>
-              <p className="text-[10px] tracking-widest uppercase text-stone-400 font-medium">
-                Next-Gen Real Estate
+              <p className="text-[9px] tracking-widest uppercase text-[#9CA3AF] font-medium">
+                Luxury Architectural Living
               </p>
             </div>
           </Link>
 
-          {/* Desktop Navigation Links */}
-          <nav className="hidden lg:flex items-center gap-8">
-            {navLinks.map((link) => {
-              const isActive = location.pathname === link.href;
-              return (
-                <Link
-                  key={link.label}
-                  to={link.href}
-                  className={`text-sm font-medium tracking-wide transition-colors ${
-                    isActive
-                      ? 'text-gold-300 border-b-2 border-gold-400 pb-1 font-semibold'
-                      : 'text-stone-300 hover:text-gold-300'
-                  }`}
-                >
-                  {link.label}
-                </Link>
-              );
-            })}
+          {/* ── CENTER: Nav Links ── */}
+          <nav
+            className="hidden lg:flex items-center gap-6 flex-1"
+            aria-label="Primary navigation"
+          >
+            {navLinks.map((link) => (
+              <a
+                key={link.label}
+                href={link.href}
+                onClick={(e) => {
+                  if (link.href.includes('#')) {
+                    e.preventDefault();
+                    handleNavClick(link.href);
+                  }
+                }}
+                className={`nav-link${isActive(link.href) ? ' active' : ''}`}
+                aria-current={isActive(link.href) ? 'page' : undefined}
+              >
+                {link.label}
+              </a>
+            ))}
           </nav>
 
-          {/* Right Action Buttons */}
-          <div className="hidden sm:flex items-center gap-3">
-            {/* AI Assistant button */}
+          {/* ── RIGHT: Actions ── */}
+          <div className="hidden sm:flex items-center gap-2 ml-auto shrink-0">
+            {/* AI Assistant */}
             {onOpenAssistant && (
               <button
+                type="button"
                 onClick={onOpenAssistant}
-                className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-midnight-800/80 hover:bg-midnight-800 text-gold-300 border border-gold-400/30 text-xs font-semibold backdrop-blur-md transition shadow-md"
-                title="Open EstateMate AI Advisor"
+                className="btn btn-secondary btn-sm"
+                aria-label="Open EstateMate AI"
               >
-                <Sparkles className="w-3.5 h-3.5 text-gold-400 animate-pulse" />
-                EstateMate AI
+                <Sparkles className="w-3.5 h-3.5 text-[#B89558]" aria-hidden="true" />
+                <span className="hidden xl:inline">EstateMate AI</span>
+                <span className="xl:hidden">AI</span>
               </button>
             )}
 
-            {/* Favorites Icon */}
+            {/* Favorites */}
             <Link
               to="/favorites"
-              className="relative p-2.5 rounded-xl bg-midnight-900/80 hover:bg-midnight-800 text-stone-300 hover:text-gold-300 border border-stone-800 backdrop-blur-md transition shadow-md"
+              className="btn btn-outline btn-icon relative"
+              aria-label={`Saved properties${favCount > 0 ? ` (${favCount})` : ''}`}
               title="Saved Properties"
-              aria-label="Favorites"
             >
-              <Heart className="w-4 h-4" />
+              <Heart className="w-4 h-4" aria-hidden="true" />
               {favCount > 0 && (
-                <span className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-gold-400 text-midnight-950 font-bold text-[10px] flex items-center justify-center shadow">
-                  {favCount}
+                <span className="absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full bg-[#B89558] text-white font-bold text-[10px] flex items-center justify-center shadow-sm border-2 border-white">
+                  {favCount > 9 ? '9+' : favCount}
                 </span>
               )}
             </Link>
 
-            {/* List Your Property */}
+            {/* Explore CTA */}
             <Link
               to="/explore"
-              className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-gold-400 hover:bg-gold-300 text-midnight-950 font-semibold text-xs transition shadow-md hover:shadow-gold-400/20"
+              className="btn btn-primary btn-sm"
             >
-              <PlusCircle className="w-3.5 h-3.5" />
-              List Property
+              <span>Explore Properties</span>
+              <ArrowRight className="w-3.5 h-3.5" aria-hidden="true" />
             </Link>
           </div>
 
-          {/* Mobile Menu Button */}
-          <div className="flex sm:hidden items-center gap-2">
+          {/* ── MOBILE: Right side ── */}
+          <div className="flex sm:hidden items-center gap-2 ml-auto">
             <Link
               to="/favorites"
-              className="relative p-2 rounded-lg bg-midnight-900 text-stone-300"
-              aria-label="Favorites"
+              className="btn btn-outline btn-icon-sm relative"
+              aria-label="Saved properties"
             >
-              <Heart className="w-4 h-4" />
+              <Heart className="w-4 h-4" aria-hidden="true" />
               {favCount > 0 && (
-                <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-gold-400 text-midnight-950 font-bold text-[9px] flex items-center justify-center">
+                <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-[#B89558] text-white font-bold text-[9px] flex items-center justify-center border border-white">
                   {favCount}
                 </span>
               )}
             </Link>
-
             <button
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="p-2 rounded-lg bg-midnight-900 text-stone-300 hover:text-white border border-stone-800"
-              aria-label="Toggle menu"
+              type="button"
+              onClick={() => setMobileOpen(true)}
+              className="btn btn-outline btn-icon-sm"
+              aria-label="Open navigation menu"
+              aria-expanded={mobileOpen}
+              aria-controls="mobile-nav-panel"
             >
-              {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+              <Menu className="w-5 h-5" aria-hidden="true" />
             </button>
           </div>
         </div>
-      </div>
+      </header>
 
-      {/* Mobile Drawer */}
-      {mobileMenuOpen && (
-        <div className="sm:hidden bg-midnight-950/95 border-b border-gold-400/20 backdrop-blur-xl px-4 py-5 shadow-2xl animate-in slide-in-from-top duration-200">
-          <nav className="flex flex-col gap-3">
-            {navLinks.map((link) => (
-              <Link
-                key={link.label}
-                to={link.href}
-                onClick={() => setMobileMenuOpen(false)}
-                className="px-3 py-2 rounded-lg text-sm font-medium text-stone-300 hover:bg-midnight-800 hover:text-gold-300"
-              >
-                {link.label}
+      {/* ── MOBILE DRAWER ── */}
+      {mobileOpen && (
+        <div
+          className="mobile-menu"
+          onClick={(e) => { if (e.target === e.currentTarget) setMobileOpen(false); }}
+          aria-modal="true"
+          role="dialog"
+          aria-label="Navigation menu"
+        >
+          <div
+            id="mobile-nav-panel"
+            ref={drawerRef}
+            className="mobile-menu-panel animate-scale-in"
+          >
+            {/* Drawer Header */}
+            <div className="flex items-center justify-between mb-6">
+              <Link to="/" className="flex items-center gap-2" onClick={() => setMobileOpen(false)}>
+                <div className="w-8 h-8 rounded-xl bg-[#17191C] flex items-center justify-center">
+                  <Box className="w-4 h-4 text-white stroke-[2]" />
+                </div>
+                <span className="font-display text-sm font-bold tracking-wider text-[#17191C]">ESTATEVERSE <span className="text-[#B89558]">3D</span></span>
               </Link>
-            ))}
+              <button
+                type="button"
+                onClick={() => setMobileOpen(false)}
+                className="btn btn-ghost btn-icon-sm"
+                aria-label="Close menu"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
 
-            <div className="pt-3 border-t border-stone-800 flex flex-col gap-2">
+            {/* Nav Links */}
+            <nav className="flex flex-col gap-1 mb-6" aria-label="Mobile navigation">
+              {navLinks.map((link) => {
+                const Icon = link.icon;
+                return (
+                  <a
+                    key={link.label}
+                    href={link.href}
+                    onClick={(e) => {
+                      if (link.href.includes('#')) e.preventDefault();
+                      handleNavClick(link.href);
+                    }}
+                    className={`flex items-center gap-3 px-3 py-3 rounded-xl text-sm font-medium transition-all ${
+                      isActive(link.href)
+                        ? 'bg-[#FAF6EE] text-[#B89558] font-semibold'
+                        : 'text-[#17191C] hover:bg-[#F7F8FA]'
+                    }`}
+                    aria-current={isActive(link.href) ? 'page' : undefined}
+                  >
+                    <Icon className={`w-4 h-4 shrink-0 ${isActive(link.href) ? 'text-[#B89558]' : 'text-[#9CA3AF]'}`} />
+                    {link.label}
+                  </a>
+                );
+              })}
+            </nav>
+
+            {/* Action Buttons */}
+            <div className="border-t border-[#E7E9ED] pt-4 flex flex-col gap-2.5">
               {onOpenAssistant && (
                 <button
-                  onClick={() => {
-                    setMobileMenuOpen(false);
-                    onOpenAssistant();
-                  }}
-                  className="flex items-center justify-center gap-2 py-2.5 rounded-lg bg-midnight-800 text-gold-300 text-xs font-semibold border border-gold-400/30"
+                  type="button"
+                  onClick={() => { setMobileOpen(false); onOpenAssistant(); }}
+                  className="btn btn-secondary w-full"
                 >
-                  <Sparkles className="w-4 h-4 text-gold-400" />
+                  <Sparkles className="w-4 h-4 text-[#B89558]" />
                   Ask EstateMate AI
                 </button>
               )}
               <Link
                 to="/explore"
-                onClick={() => setMobileMenuOpen(false)}
-                className="flex items-center justify-center gap-2 py-2.5 rounded-lg bg-gold-400 text-midnight-950 text-xs font-semibold"
+                onClick={() => setMobileOpen(false)}
+                className="btn btn-primary w-full"
               >
-                <PlusCircle className="w-4 h-4" />
-                List Your Property
+                <span>Explore Properties</span>
+                <ArrowRight className="w-4 h-4" />
               </Link>
             </div>
-          </nav>
+          </div>
         </div>
       )}
-    </header>
+    </>
   );
 };

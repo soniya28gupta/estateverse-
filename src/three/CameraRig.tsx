@@ -13,8 +13,8 @@ export const CameraRig: React.FC<CameraRigProps> = ({ activeHotspot, resetSignal
   const controlsRef = useRef<any>(null);
   const { camera } = useThree();
 
-  const defaultPosition = [7.5, 4.8, 8.5] as const;
-  const defaultTarget = [0, 1.2, 0] as const;
+  const defaultPosition = [6, 2.8, 9] as const;
+  const defaultTarget = [0, 1.0, 0] as const;
 
   const targetCameraPos = useRef<THREE.Vector3>(new THREE.Vector3(...defaultPosition));
   const targetLookAt = useRef<THREE.Vector3>(new THREE.Vector3(...defaultTarget));
