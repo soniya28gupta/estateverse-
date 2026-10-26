@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # EstateVerse 3D — Next-Generation Architectural Discovery Platform
 
 > **"Find a Place. Imagine Your Future."**  
@@ -76,3 +77,6 @@ To connect your own live Supabase instance:
    VITE_SUPABASE_URL=https://your-project.supabase.co
    VITE_SUPABASE_ANON_KEY=your-anon-key
    ```
+=======
+# estateverse-
+>>>>>>> 0c5e287bc6fda6534a7ed6b2a32b05072f96a563
