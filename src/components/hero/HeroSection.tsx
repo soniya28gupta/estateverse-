@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
-import { ArrowRight, Box, Sparkles, Film, CheckCircle2, ChevronDown } from 'lucide-react';
-import { VillaScene } from '../../three/VillaScene';
-import { CinematicPropertyVideo } from './CinematicPropertyVideo';
-import { SAMPLE_PROPERTIES } from '../../data/properties';
-import { PropertySearch, FilterState } from '../search/PropertySearch';
+import React, { useState, useEffect, useRef } from 'react';
+import { ArrowRight, Box, Sun, Moon, Sunrise, Layers, Eye, RotateCcw, Sparkles } from 'lucide-react';
+import { FilterState } from '../search/PropertySearch';
+import { InteractiveHeroCanvas, LightingMode } from '../../three/InteractiveHeroCanvas';
+import { useWebGLSupport } from '../../hooks/useWebGLSupport';
+import { useReducedMotion } from '../../hooks/useReducedMotion';
+import gsap from 'gsap';
 
 interface HeroSectionProps {
   filters: FilterState;
@@ -11,172 +12,264 @@ interface HeroSectionProps {
   onResetFilters: () => void;
   resultCount: number;
   onExploreClick: () => void;
+  onEnter3DWorld: () => void;
 }
 
-const FEATURES = [
-  { label: 'Immersive 3D Experiences', desc: 'Walk through every room before you visit' },
-  { label: 'Verified Property Data', desc: 'Real dimensions, real specs, zero guesswork' },
-  { label: 'Smarter Discovery', desc: 'AI-powered matching to your lifestyle' },
+const HERO_HOTSPOTS = [
+  { id: 'hs-pool', label: 'Reflection Pool' },
+  { id: 'hs-living', label: 'Glass Pavilion' },
+  { id: 'hs-master', label: 'Master Cantilever' },
+  { id: 'hs-lounge', label: 'Sunken Lounge' },
+  { id: 'hs-garden', label: 'Zen Courtyard' },
 ];
 
 export const HeroSection: React.FC<HeroSectionProps> = ({
-  filters,
-  onFilterChange,
-  onResetFilters,
-  resultCount,
   onExploreClick,
+  onEnter3DWorld,
 }) => {
-  const [heroMode, setHeroMode] = useState<'3d' | 'video'>('3d');
-  const flagshipProperty = SAMPLE_PROPERTIES[0];
+  const isWebGL = useWebGLSupport();
+  const reducedMotion = useReducedMotion();
 
-  const scrollToProperties = () => {
-    const el = document.getElementById('featured-properties');
-    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  };
+  // 3D Scene Controls State
+  const [lightingMode, setLightingMode] = useState<LightingMode>('golden');
+  const [isExploded, setIsExploded] = useState<boolean>(false);
+  const [isWireframe, setIsWireframe] = useState<boolean>(false);
+  const [activeHotspotId, setActiveHotspotId] = useState<string | null>(null);
 
-  const scrollTo3D = () => {
-    const el = document.getElementById('experience-3d');
-    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    else setHeroMode('3d');
-  };
+  // Animation refs
+  const heroRootRef = useRef<HTMLDivElement>(null);
+  const headlineRef = useRef<HTMLHeadingElement>(null);
+  const badgeRef = useRef<HTMLDivElement>(null);
+  const descRef = useRef<HTMLParagraphElement>(null);
+  const ctaRef = useRef<HTMLDivElement>(null);
+  const hudRef = useRef<HTMLDivElement>(null);
+
+  // GSAP Intro Reveal
+  useEffect(() => {
+    if (reducedMotion) return;
+
+    const ctx = gsap.context(() => {
+      const tl = gsap.timeline({ defaults: { ease: 'power3.out', duration: 1.1 } });
+
+      tl.from(badgeRef.current, {
+        y: -18,
+        opacity: 0,
+        duration: 0.8,
+      })
+      .from(headlineRef.current, {
+        y: 32,
+        opacity: 0,
+        duration: 1.2,
+      }, '-=0.5')
+      .from(descRef.current, {
+        y: 20,
+        opacity: 0,
+        duration: 0.9,
+      }, '-=0.7')
+      .from(ctaRef.current, {
+        y: 20,
+        opacity: 0,
+        duration: 0.9,
+      }, '-=0.6')
+      .from(hudRef.current, {
+        opacity: 0,
+        y: 15,
+        duration: 0.8,
+      }, '-=0.4');
+    }, heroRootRef);
+
+    return () => ctx.revert();
+  }, [reducedMotion]);
 
   return (
     <section
-      className="relative bg-white overflow-hidden"
-      style={{ paddingTop: 'var(--nav-height)' }}
-      aria-label="Hero — property discovery showcase"
+      ref={heroRootRef}
+      className="relative w-full min-h-[92vh] lg:min-h-[96vh] flex flex-col justify-between bg-white overflow-hidden select-none"
+      aria-label="EstateVerse 3D Architectural Experience"
     >
-      {/* Ambient background blobs */}
-      <div className="hero-ambient-1" aria-hidden="true" />
-      <div className="hero-ambient-2" aria-hidden="true" />
+      {/* Background Architectural Subtle Grid */}
+      <div
+        className="absolute inset-0 pointer-events-none opacity-[0.035]"
+        style={{
+          backgroundImage: `linear-gradient(#171717 1px, transparent 1px), linear-gradient(90deg, #171717 1px, transparent 1px)`,
+          backgroundSize: '80px 80px',
+        }}
+        aria-hidden="true"
+      />
 
-      <div className="section-container relative z-10">
-        {/* ── MAIN GRID ── */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 xl:gap-14 items-center py-12 lg:py-16 xl:py-20">
+      {/* Warm ambient vignette */}
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-96 bg-[radial-gradient(ellipse_at_top,_rgba(183,154,104,0.08)_0%,_transparent_75%)] pointer-events-none" />
 
-          {/* LEFT: Copy */}
-          <div className="lg:col-span-5 flex flex-col items-start text-left">
-            {/* Eyebrow */}
-            <div className="section-eyebrow animate-fade-in-up mb-5">
-              <Sparkles className="w-3 h-3 text-[#B89558]" aria-hidden="true" />
-              Discover Spaces That Feel Like Home
-            </div>
-
-            {/* Headline */}
-            <h1 className="heading-display heading-xl mb-4 animate-fade-in-up delay-100">
-              Find a Place.<br />
-              <span className="gold-gradient-text">Imagine Your Future.</span>
-            </h1>
-
-            {/* Subtext */}
-            <p className="text-[#6B7280] text-base sm:text-lg leading-relaxed max-w-lg mb-8 font-normal animate-fade-in-up delay-200">
-              Explore extraordinary properties, experience architecture in 3D, and discover your next home with complete confidence.
-            </p>
-
-            {/* CTA Buttons */}
-            <div className="flex flex-wrap items-center gap-3 mb-10 w-full animate-fade-in-up delay-300">
-              <button
-                type="button"
-                onClick={scrollToProperties}
-                className="btn btn-primary btn-lg"
-              >
-                <span>Explore Properties</span>
-                <ArrowRight className="w-4.5 h-4.5 stroke-[2]" style={{ width: '18px', height: '18px' }} aria-hidden="true" />
-              </button>
-
-              <button
-                type="button"
-                onClick={scrollTo3D}
-                className="btn btn-secondary btn-lg"
-              >
-                <Box className="w-4 h-4 text-[#B89558]" aria-hidden="true" />
-                Experience 3D Living
-              </button>
-            </div>
-
-            {/* Feature Trust Indicators */}
-            <div className="w-full space-y-3 animate-fade-in-up delay-400">
-              {FEATURES.map((feat) => (
-                <div key={feat.label} className="flex items-center gap-3">
-                  <CheckCircle2 className="w-4.5 h-4.5 text-[#B89558] shrink-0" style={{ width: '18px', height: '18px' }} aria-hidden="true" />
-                  <div>
-                    <span className="text-sm font-semibold text-[#17191C]">{feat.label}</span>
-                    <span className="text-xs text-[#9CA3AF] ml-2 hidden sm:inline">{feat.desc}</span>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* RIGHT: 3D / Video showcase */}
-          <div id="hero-spatial-viewport" className="lg:col-span-7 flex flex-col gap-3 animate-fade-in delay-200">
-            {/* Mode Switcher */}
-            <div className="self-end flex items-center bg-[#F7F8FA] p-1 rounded-2xl border border-[#E7E9ED] shadow-sm">
-              <button
-                type="button"
-                onClick={() => setHeroMode('3d')}
-                aria-pressed={heroMode === '3d'}
-                className={`btn btn-sm gap-1.5 ${
-                  heroMode === '3d'
-                    ? 'bg-white text-[#17191C] shadow-sm border border-[#E7E9ED]'
-                    : 'text-[#9CA3AF] hover:text-[#6B7280] border-transparent bg-transparent'
-                }`}
-              >
-                <Box className="w-3.5 h-3.5 text-[#B89558]" aria-hidden="true" />
-                Interactive 3D Villa
-              </button>
-              <button
-                type="button"
-                onClick={() => setHeroMode('video')}
-                aria-pressed={heroMode === 'video'}
-                className={`btn btn-sm gap-1.5 ${
-                  heroMode === 'video'
-                    ? 'bg-white text-[#17191C] shadow-sm border border-[#E7E9ED]'
-                    : 'text-[#9CA3AF] hover:text-[#6B7280] border-transparent bg-transparent'
-                }`}
-              >
-                <Film className="w-3.5 h-3.5 text-[#B89558]" aria-hidden="true" />
-                Cinematic Walkthrough
-              </button>
-            </div>
-
-            {/* Viewport */}
-            <div className="w-full rounded-3xl overflow-hidden border border-[#E7E9ED] shadow-soft-xl"
-                 style={{ height: 'clamp(400px, 50vw, 580px)' }}>
-              {heroMode === '3d' ? (
-                <VillaScene property={flagshipProperty} showPropertyOverlay={true} />
-              ) : (
-                <CinematicPropertyVideo
-                  title={flagshipProperty.title}
-                  locality={`${flagshipProperty.locality}, ${flagshipProperty.city}`}
-                  posterUrl={flagshipProperty.images[0]}
-                />
-              )}
-            </div>
-          </div>
+      {/* ── TOP EDITORIAL CONTENT (Floating gracefully above 3D building) ── */}
+      <div className="relative z-10 pt-10 sm:pt-14 pb-4 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto text-center">
+        {/* Eyebrow Badge */}
+        <div
+          ref={badgeRef}
+          className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#FAF6EE] border border-[#E9DCBC] text-[#8C734B] text-[10px] sm:text-xs font-semibold tracking-[0.22em] uppercase shadow-xs mb-4"
+        >
+          <span className="w-1.5 h-1.5 rounded-full bg-[#B79A68] animate-pulse" />
+          <span>SIGNATURE ARCHITECTURE · REAL-TIME 3D</span>
         </div>
 
-        {/* ── SEARCH BAR ── */}
-        <div className="pb-12 lg:pb-16">
-          <PropertySearch
-            filters={filters}
-            onFilterChange={onFilterChange}
-            onResetFilters={onResetFilters}
-            resultCount={resultCount}
-          />
-        </div>
+        {/* Editorial Headline */}
+        <h1
+          ref={headlineRef}
+          className="font-serif text-[#171717] tracking-tight leading-[1.08] max-w-4xl mx-auto mb-4"
+          style={{ fontSize: 'clamp(2.4rem, 5.2vw, 4.6rem)' }}
+        >
+          Discover Spaces{' '}
+          <span className="font-serif italic font-normal text-[#B79A68]">
+            Beyond Ordinary.
+          </span>
+        </h1>
 
-        {/* Scroll indicator */}
-        <div className="hidden lg:flex justify-center pb-8 -mt-4">
+        {/* Subtitle */}
+        <p
+          ref={descRef}
+          className="text-[#555555] text-sm sm:text-base md:text-lg font-normal max-w-2xl mx-auto mb-6 leading-relaxed"
+        >
+          Explore exceptional properties through an immersive real estate experience powered by real-time 3D spatial models and architectural precision.
+        </p>
+
+        {/* Primary CTAs */}
+        <div
+          ref={ctaRef}
+          className="flex flex-wrap items-center justify-center gap-3.5 max-w-md mx-auto"
+        >
           <button
             type="button"
-            onClick={scrollToProperties}
-            className="flex flex-col items-center gap-1.5 text-[#9CA3AF] hover:text-[#B89558] transition-colors group"
-            aria-label="Scroll to properties"
+            onClick={onExploreClick}
+            className="h-12 px-8 rounded-2xl bg-[#171717] hover:bg-[#B79A68] text-white font-semibold text-xs tracking-wider uppercase transition-all duration-300 flex items-center justify-center gap-2.5 shadow-md hover:shadow-xl hover:scale-[1.02] active:scale-[0.98] group"
           >
-            <span className="text-[10px] font-medium tracking-widest uppercase">Discover</span>
-            <ChevronDown className="w-4 h-4 animate-bounce" aria-hidden="true" />
+            <span>EXPLORE PROPERTIES</span>
+            <ArrowRight className="w-4 h-4 text-white group-hover:translate-x-1 transition-transform" />
           </button>
+
+          <button
+            type="button"
+            onClick={onEnter3DWorld}
+            className="h-12 px-7 rounded-2xl bg-[#FAF6EE] hover:bg-[#EAE4D2] text-[#8C734B] font-semibold text-xs tracking-wider uppercase transition-all duration-300 flex items-center justify-center gap-2 border border-[#E9DCBC] shadow-xs hover:scale-[1.02] active:scale-[0.98]"
+          >
+            <Box className="w-4 h-4 text-[#B79A68]" />
+            <span>FULLSCREEN 3D TOUR</span>
+          </button>
+        </div>
+      </div>
+
+      {/* ── 3D ARCHITECTURAL CANVAS INTEGRATED SEAMLESSLY ── */}
+      <div className="relative w-full flex-1 min-h-[440px] sm:min-h-[500px] lg:min-h-[560px] flex items-center justify-center">
+        {isWebGL ? (
+          <InteractiveHeroCanvas
+            lightingMode={lightingMode}
+            isExploded={isExploded}
+            isWireframe={isWireframe}
+            activeHotspotId={activeHotspotId}
+            onHotspotSelect={(id) => setActiveHotspotId(prev => prev === id ? null : id)}
+            className="w-full h-full"
+          />
+        ) : (
+          <div className="relative w-full h-full flex items-center justify-center">
+            <img
+              src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=2000&q=80"
+              alt="Luxury Architectural Pavilion"
+              className="w-full h-full object-cover max-h-[500px] rounded-3xl opacity-90 shadow-2xl"
+            />
+          </div>
+        )}
+
+        {/* ── INTERACTIVE 3D HUD CONTROLS (Floating minimal toolbar) ── */}
+        <div
+          ref={hudRef}
+          className="absolute bottom-4 sm:bottom-6 left-1/2 -translate-x-1/2 z-20 w-[94%] max-w-4xl flex flex-wrap items-center justify-between gap-3 p-2.5 sm:p-3 rounded-2xl bg-white/90 backdrop-blur-md border border-[#E7E9ED] shadow-xl"
+        >
+          {/* Lighting Mode Selector */}
+          <div className="flex items-center gap-1 bg-[#F7F8FA] p-1 rounded-xl border border-[#E7E9ED]">
+            <button
+              type="button"
+              onClick={() => setLightingMode('golden')}
+              className={`px-2.5 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-all ${
+                lightingMode === 'golden'
+                  ? 'bg-white text-[#8C734B] shadow-xs'
+                  : 'text-[#6B7280] hover:text-[#171717]'
+              }`}
+              title="Golden Hour Lighting"
+            >
+              <Sunrise className="w-3.5 h-3.5 text-amber-500" />
+              <span className="hidden sm:inline">Golden</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => setLightingMode('noon')}
+              className={`px-2.5 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-all ${
+                lightingMode === 'noon'
+                  ? 'bg-white text-[#171717] shadow-xs'
+                  : 'text-[#6B7280] hover:text-[#171717]'
+              }`}
+              title="Daylight Noon Sun"
+            >
+              <Sun className="w-3.5 h-3.5 text-sky-500" />
+              <span className="hidden sm:inline">Daylight</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => setLightingMode('twilight')}
+              className={`px-2.5 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-all ${
+                lightingMode === 'twilight'
+                  ? 'bg-white text-indigo-900 shadow-xs'
+                  : 'text-[#6B7280] hover:text-[#171717]'
+              }`}
+              title="Twilight Dusk Lighting"
+            >
+              <Moon className="w-3.5 h-3.5 text-indigo-500" />
+              <span className="hidden sm:inline">Twilight</span>
+            </button>
+          </div>
+
+          {/* Hotspot Inspection Focus Pills */}
+          <div className="hidden md:flex items-center gap-1.5 overflow-x-auto">
+            {HERO_HOTSPOTS.map((hs) => (
+              <button
+                key={hs.id}
+                type="button"
+                onClick={() => setActiveHotspotId(prev => prev === hs.id ? null : hs.id)}
+                className={`px-2.5 py-1.5 rounded-lg text-[11px] font-medium transition-all ${
+                  activeHotspotId === hs.id
+                    ? 'bg-[#171717] text-white shadow-xs'
+                    : 'bg-[#F7F8FA] text-[#555555] hover:text-[#171717] border border-transparent hover:border-[#E7E9ED]'
+                }`}
+              >
+                {hs.label}
+              </button>
+            ))}
+          </div>
+
+          {/* Action Buttons: Exploded View & Reset */}
+          <div className="flex items-center gap-1.5 ml-auto sm:ml-0">
+            <button
+              type="button"
+              onClick={() => setIsExploded(prev => !prev)}
+              className={`px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all ${
+                isExploded
+                  ? 'bg-[#B79A68] text-white shadow-md'
+                  : 'bg-[#FAF6EE] text-[#8C734B] border border-[#E9DCBC] hover:bg-[#EAE4D2]'
+              }`}
+              title="Toggle Architectural Exploded View"
+            >
+              <Layers className="w-3.5 h-3.5" />
+              <span>{isExploded ? 'Exploded Active' : 'Exploded View'}</span>
+            </button>
+
+            {activeHotspotId && (
+              <button
+                type="button"
+                onClick={() => setActiveHotspotId(null)}
+                className="p-1.5 rounded-xl bg-[#F7F8FA] hover:bg-[#E7E9ED] text-[#6B7280] transition-colors"
+                title="Reset Camera View"
+              >
+                <RotateCcw className="w-4 h-4" />
+              </button>
+            )}
+          </div>
         </div>
       </div>
     </section>

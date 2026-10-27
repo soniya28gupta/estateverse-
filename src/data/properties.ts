@@ -46,49 +46,49 @@ export const SAMPLE_PROPERTIES: Property[] = [
     },
     hotspots: [
       {
+        id: 'hs-pool',
+        name: 'Infinity Reflection Pool',
+        position: [2.8, 0.3, 1.8],
+        roomType: 'Outdoor Leisure',
+        dimensions: '38 ft × 14 ft (Heated Basin)',
+        features: ['Black Basalt Volcanic Tile', 'Integrated Underwater LED Ribbon', 'Teak Sundeck'],
+        description: 'Zero-edge heated pool mirroring the geometric cantilevered facades and open horizon.'
+      },
+      {
         id: 'hs-living',
         name: 'Grand Living Salon',
-        position: [0.5, 1.2, 1.2],
+        position: [0.2, 1.2, 1.8],
         roomType: 'Ground Floor Lounge',
         dimensions: '26 ft × 20 ft (Double Height)',
-        features: ['Italian Statuario Marble', 'Frameless Glass Glazing', 'Linear Architectural Fireplace'],
-        description: 'Commanding double-height entertaining space opening seamlessly onto the sunken pool deck.'
+        features: ['Italian Statuario Marble', 'Frameless Acoustic Glazing', 'Linear Architectural Fireplace'],
+        description: 'Double-volume entertaining sanctuary opening seamlessly onto the sunken pool terrace.'
       },
       {
         id: 'hs-master',
-        name: 'Master Sanctuary Suite',
-        position: [-1.8, 3.2, 0.4],
-        roomType: 'First Floor Master Suite',
+        name: 'Master Bedroom',
+        position: [-0.4, 2.7, 2.2],
+        roomType: 'Upper Floor Master Suite',
         dimensions: '22 ft × 18 ft + Walk-in Dressing',
-        features: ['Smoked Oak Parquet', 'Private Cantilevered Balcony', 'Spa Bath with Skylight'],
-        description: 'Private upper-level retreat oriented towards panoramic sunrise vistas.'
+        features: ['Smoked Oak Parquet', 'Private Cantilevered Balcony', 'Frameless Glass Balustrade'],
+        description: 'Cantilevered private retreat oriented toward morning sunrise and mountain vistas.'
       },
       {
-        id: 'hs-pool',
-        name: 'Infinity Reflection Pool',
-        position: [2.5, 0.3, 2.2],
-        roomType: 'Outdoor Leisure',
-        dimensions: '38 ft × 14 ft (Heated)',
-        features: ['Black Basalt Tile Finish', 'Integrated Underwater LED Ribbon', 'Teak Wood Sundeck'],
-        description: 'Architectural pool mirroring the clean geometric lines of the modern facade.'
-      },
-      {
-        id: 'hs-terrace',
-        name: 'Sky Lounge Terrace',
-        position: [1.2, 3.4, -0.8],
-        roomType: 'Rooftop Entertaining',
-        dimensions: '32 ft × 16 ft',
-        features: ['Pergola Shading', 'Integrated Barbecue Counter', 'Sunset Cityscape Views'],
-        description: 'Generous entertaining terrace with weather-treated timber decking and perimeter planters.'
+        id: 'hs-lounge',
+        name: 'Outdoor Lounge',
+        position: [4.1, 0.35, 1.7],
+        roomType: 'Sun Terrace & Deck',
+        dimensions: '18 ft × 12 ft Teak Platform',
+        features: ['Minimalist Daybeds', 'Weatherproof Teak Decking', 'Bespoke Ground Uplighting'],
+        description: 'Tranquil poolside lounging deck designed for afternoon relaxation and sunset entertaining.'
       },
       {
         id: 'hs-garden',
-        name: 'Zen Landscape Courtyard',
-        position: [-2.2, 0.2, 1.8],
-        roomType: 'Landscape',
-        dimensions: '400 sq. ft.',
-        features: ['Specimen Frangipani Tree', 'Drip-irrigated Native Flora', 'Granite Stepping Stones'],
-        description: 'A tranquil green lung buffering the residence from external urban movement.'
+        name: 'Landscaped Garden',
+        position: [-3.6, 0.8, 2.2],
+        roomType: 'Courtyard Landscape',
+        dimensions: '450 sq. ft. Zen Garden',
+        features: ['Specimen Japanese Pine', 'Travertine Planter Plinth', 'Granite Stepping Stones'],
+        description: 'Sculptural garden courtyard providing visual serenity and natural cross-ventilation.'
       }
     ],
     nearbyFacilities: [
